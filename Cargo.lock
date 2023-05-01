@@ -123,7 +123,6 @@ dependencies = [
 name = "elapsed"
 version = "0.1.0"
 dependencies = [
- "serde_json",
  "tasklib",
 ]
 
@@ -323,9 +322,8 @@ dependencies = [
 
 [[package]]
 name = "tasklib"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f95edcaa431d9309e11c9531b6b53266c5f29fb739dd34d23dabe4b767a5b00"
+version = "0.2.0"
+source = "git+https://github.com/AceofSpades5757/tasklib-rs?branch=update#df35b6009bc9b362523f0de99dc14248e5eaf215"
 dependencies = [
  "chrono",
  "regex",

@@ -5,9 +5,7 @@
 use std::io::{self, BufRead};
 
 //use tasklib::prelude::*;
-use tasklib::Task;
-use tasklib::Duration;
-use serde_json;
+use tasklib::{self, Task, Duration};
 
 fn main() {
     // Read task JSON from stdin
@@ -17,7 +15,8 @@ fn main() {
     eprintln!("lines: {}", &lines);
 
     //let task: Task = lines.parse().unwrap();
-    let task: Task = serde_json::from_str(&lines).unwrap();
+    //let task: Task = serde_json::from_str(&lines).unwrap();
+    let task: Task = lines.into();
 
     let start = task.start();
     let end = task.end();
@@ -34,7 +33,9 @@ fn main() {
     // Write modified task JSON to stdout
     let stdout = io::stdout();
     let mut handle = stdout.lock();
-    let json = serde_json::to_string(&new_task).unwrap();
+    //let json = serde_json::to_string(&new_task).unwrap();
+    let json = new_task.to_string();
+    handle.write_all(json.as_bytes()).unwrap();
 }
 
 fn add_elapsed(task: Task) -> Task {
@@ -54,15 +55,17 @@ fn add_elapsed(task: Task) -> Task {
 
     //let mut task = task.clone();
     // UDAs come out just like any other value.
-    let mut task = Task {
-        //elapsed,
-        uda: Some(tasklib::uda::UDA {
-            elapsed: Some(elapsed),
-            ..Default::default()
-        }),
-        ..task
-    };
-    task.set_elapsed(elapsed);
+    let mut modified_task = task.clone();
+    modified_task.set_uda("elapsed", elapsed);
+    //let mut task = Task {
+        ////elapsed,
+        //uda: Some(tasklib::uda::UDA {
+            //elapsed: Some(elapsed),
+            //..Default::default()
+        //}),
+        //..task
+    //};
+    //task.set_elapsed(elapsed);
 
     task
 }
