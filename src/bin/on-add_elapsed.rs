@@ -8,25 +8,25 @@ use std::io::{self, BufRead};
 use tasklib::{self, Task, Duration};
 
 fn main() {
+    env_logger::init();
+
     // Read task JSON from stdin
     let stdin = io::stdin();
     let lines: String = stdin.lock().lines().map(|l| l.unwrap()).collect();
 
-    eprintln!("lines: {}", &lines);
+    log::info!("lines: {}", &lines);
 
-    //let task: Task = lines.parse().unwrap();
-    //let task: Task = serde_json::from_str(&lines).unwrap();
     let task: Task = lines.into();
 
     let start = task.start();
     let end = task.end();
 
     if start.is_none() || end.is_none() {
-        eprintln!("start or end is None");
+        log::info!("start or end is None");
         return;
     }
 
-    eprintln!("task: {:?}", &task);
+    log::info!("task: {:?}", &task);
 
     let new_task = add_elapsed(task);
 
