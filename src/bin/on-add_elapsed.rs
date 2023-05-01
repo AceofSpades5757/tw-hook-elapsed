@@ -3,6 +3,7 @@
 //! This would typically be for a task that is logged with a given start and end time.
 
 use std::io::{self, BufRead};
+use std::io::Write;
 
 //use tasklib::prelude::*;
 use tasklib::{self, Task, Duration};
@@ -33,8 +34,7 @@ fn main() {
     // Write modified task JSON to stdout
     let stdout = io::stdout();
     let mut handle = stdout.lock();
-    //let json = serde_json::to_string(&new_task).unwrap();
-    let json = new_task.to_string();
+    let json: String = new_task.into();
     handle.write_all(json.as_bytes()).unwrap();
 }
 
@@ -51,32 +51,22 @@ fn add_elapsed(task: Task) -> Task {
 
     let duration = end.signed_duration_since(*start);
     let elapsed: Duration = duration.into();
-    //let elapsed = end - start;
 
-    //let mut task = task.clone();
     // UDAs come out just like any other value.
     let mut modified_task = task.clone();
-    modified_task.set_uda("elapsed", elapsed);
-    //let mut task = Task {
-        ////elapsed,
-        //uda: Some(tasklib::uda::UDA {
-            //elapsed: Some(elapsed),
-            //..Default::default()
-        //}),
-        //..task
-    //};
-    //task.set_elapsed(elapsed);
+    modified_task.udas_mut().insert("elapsed".into(), elapsed.into());
 
-    task
+    modified_task
 }
 
 mod tests {
+    #[allow(unused_imports)]
     use super::*;
 
     #[test]
-    fn test() {
-        let input = r#"{"description":"test","entry":"2021-01-01T00:00:00Z","modified":"2021-01-01T00:00:00Z","status":"pending","tags":["test"],"uuid":"00000000-0000-0000-0000-000000000000"}"#;
-        let expected = r#"{"description":"test","entry":"2021-01-01T00:00:00Z","elapsed":"0:00:00","modified":"2021-01-01T00:00:00Z","status":"pending","tags":["test"],"uuid":"00000000-0000-0000-0000-000000000000"}"#;
-        //let task: Task = serde_json::from_str(input).unwrap();
+    fn test_add_elapsed() {
+        let input = r#"{"id": 0, "urgency": 1.0, "description":"test","entry":"20210101T000000Z","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000"}"#;
+        let expected = r#"{"id": 0, "urgency": 1.0, "description":"test","entry":"20210101T000000Z","elapsed":"P2H","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000"}"#;
+        assert_eq!(add_elapsed(input.into()).id(), expected.parse::<Task>().unwrap().id());
     }
 }
