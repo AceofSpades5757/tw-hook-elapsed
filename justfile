@@ -1,3 +1,10 @@
+help:
+    @just --list
+
+build:
+    # Linux (cross-compile)
+    cargo build --release --bin on-add_noop --target x86_64-unknown-linux-musl
+
 test:
     # Use stdin to properly test
     # start and end is none
