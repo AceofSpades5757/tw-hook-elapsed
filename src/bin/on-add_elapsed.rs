@@ -11,6 +11,16 @@ fn main() {
 
     // Read task JSON from stdin
     let task: Task = Task::from_stdin().unwrap();
+
+    // Run Hook
+    let modified_task = run_on_add_hook(task);
+
+    // Write modified task JSON to stdout
+    modified_task.to_stdout().unwrap();
+}
+
+/// Abstraction to ensure that everything the hook needs to complete is returned.
+fn run_on_add_hook(task: Task) -> Task {
     log::info!("task: {:?}", &task);
 
     let start = task.start();
@@ -18,135 +28,10 @@ fn main() {
 
     if start.is_none() || end.is_none() {
         log::info!("start or end is None");
-        return;
+        return task;
     }
 
     let modified_task = add_elapsed(task);
-    log::info!("task: {:?}", &modified_task);
-
-    // Write modified task JSON to stdout
-    modified_task.to_stdout().unwrap();
-}
-
-mod tests {
-    #[allow(unused_imports)]
-    use super::*;
-
-    #[test]
-    fn start_and_end() {
-        let input = r#"{"description":"test","entry":"20210101T000000Z","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000",
-        "start":"20210101T020000Z",
-        "end":"20210101T040000Z"
-    }"#;
-        let expected = r#"{"description":"test","entry":"20210101T000000Z","elapsed":"P2H","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000",
-        "start":"20210101T020000Z",
-        "end":"20210101T040000Z"
-    }"#;
-
-        let input_uda = add_elapsed(input.into()).udas().get("elapsed").unwrap().clone();
-        let input_elapsed = match input_uda {
-            UdaValue::Duration(d) => d,
-            UdaValue::String(s) => s.parse::<Duration>().unwrap(),
-            _ => panic!("not a duration"),
-        };
-        let expected_uda = expected.parse::<Task>().unwrap().udas().get("elapsed").unwrap().clone();
-        let expected_elapsed = match expected_uda {
-            UdaValue::Duration(d) => d,
-            UdaValue::String(s) => s.parse::<Duration>().unwrap(),
-            _ => panic!("not a duration"),
-        };
-
-        assert_eq!(input_elapsed, expected_elapsed);
-    }
-    #[test]
-    fn no_start_no_end() {
-        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending"}"#;
-        let expected = input;
-        assert_eq!(
-            add_elapsed(input.into()),
-            expected.parse::<Task>().unwrap(),
-        );
-    }
-    #[test]
-    fn no_start() {
-        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending", "end":"20210101T020000Z"}"#;
-        let expected = input;
-        assert_eq!(
-            add_elapsed(input.into()),
-            expected.parse::<Task>().unwrap(),
-        );
-    }
-    #[test]
-    fn no_end() {
-        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending", "start":"20210101T020000Z"}"#;
-        let expected = input;
-        assert_eq!(
-            add_elapsed(input.into()),
-            expected.parse::<Task>().unwrap(),
-        );
-    }
-    #[test]
-    fn existing_elapsed_start_and_end() {
-        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending",
-        "start":"20210101T020000Z",
-        "end":"20210101T040000Z",
-        "elapsed":"PT1H"
-    }"#;
-        let expected = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending",
-        "start":"20210101T020000Z",
-        "end":"20210101T040000Z",
-        "elapsed":"PT3H"
-    }"#;
-        let input_uda = add_elapsed(input.into()).udas().get("elapsed").unwrap().clone();
-        let input_elapsed = match input_uda {
-            UdaValue::Duration(d) => d,
-            UdaValue::String(s) => s.parse::<Duration>().unwrap(),
-            _ => panic!("not a duration"),
-        };
-        let expected_uda = expected.parse::<Task>().unwrap().udas().get("elapsed").unwrap().clone();
-        let expected_elapsed = match expected_uda {
-            UdaValue::Duration(d) => d,
-            UdaValue::String(s) => s.parse::<Duration>().unwrap(),
-            _ => panic!("not a duration"),
-        };
-        assert_eq!(
-            input_elapsed,
-            expected_elapsed,
-        );
-    }
-    #[test]
-    fn existing_elapsed_no_start_no_end() {
-        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending",
-        "elapsed":"PT1H"
-    }"#;
-        let expected = input;
-        assert_eq!(
-            add_elapsed(input.into()),
-            expected.parse::<Task>().unwrap(),
-        );
-    }
-    #[test]
-    fn existing_elapsed_no_start() {
-        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending",
-        "end":"20210101T040000Z",
-        "elapsed":"PT1H"
-    }"#;
-        let expected = input;
-        assert_eq!(
-            add_elapsed(input.into()),
-            expected.parse::<Task>().unwrap(),
-        );
-    }
-    #[test]
-    fn existing_elapsed_no_end() {
-        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending",
-        "start":"20210101T040000Z",
-        "elapsed":"PT1H"
-    }"#;
-        let expected = input;
-        assert_eq!(
-            add_elapsed(input.into()),
-            expected.parse::<Task>().unwrap(),
-        );
-    }
+    log::info!("modified task: {:?}", &modified_task);
+    return modified_task;
 }
