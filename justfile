@@ -16,6 +16,16 @@ test1:
         "modified": "20220131T083000Z", \
         "status": "pending" \
     }' | cargo run --bin on-add_elapsed
+test2:
+    # Modify test (delete task)
+    printf '{ \
+        "uuid": "d67fce70-c0b6-43c5-affc-a21e64567d40", \
+        "description": "My description.", \
+        "entry": "20220131T083000Z", \
+        "modified": "20220131T083000Z", \
+        "status": "pending" \
+    }\n{}' | cargo run --bin on-modify_elapsed
+
 test:
     # echo '{ "uuid": "d67fce70-c0b6-43c5-affc-a21e64567d40", "description": "My description.", "entry": "20220131T083000Z", "modified": "20220131T083000Z", "status": "pending", "urgency": 0.0 }' | cargo run --bin on-add_noop
     # NOOP
