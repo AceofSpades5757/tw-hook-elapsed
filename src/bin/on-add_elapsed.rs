@@ -2,22 +2,14 @@
 //!
 //! This would typically be for a task that is logged with a given start and end time.
 
-use std::io::{self, BufRead};
-use std::io::Write;
-
-//use tasklib::prelude::*;
-use tasklib::{self, Task, Duration};
+use tasklib::prelude::*;
 
 fn main() {
     env_logger::init();
 
     // Read task JSON from stdin
-    let stdin = io::stdin();
-    let lines: String = stdin.lock().lines().map(|l| l.unwrap()).collect();
-
-    log::info!("lines: {}", &lines);
-
-    let task: Task = lines.into();
+    let task: Task = Task::from_stdin().unwrap();
+    log::info!("task: {:?}", &task);
 
     let start = task.start();
     let end = task.end();
@@ -27,15 +19,11 @@ fn main() {
         return;
     }
 
-    log::info!("task: {:?}", &task);
-
-    let new_task = add_elapsed(task);
+    let modified_task = add_elapsed(task);
+    log::info!("task: {:?}", &modified_task);
 
     // Write modified task JSON to stdout
-    let stdout = io::stdout();
-    let mut handle = stdout.lock();
-    let json: String = new_task.into();
-    handle.write_all(json.as_bytes()).unwrap();
+    modified_task.to_stdout().unwrap();
 }
 
 fn add_elapsed(task: Task) -> Task {
@@ -64,9 +52,39 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_add_elapsed() {
-        let input = r#"{"id": 0, "urgency": 1.0, "description":"test","entry":"20210101T000000Z","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000"}"#;
-        let expected = r#"{"id": 0, "urgency": 1.0, "description":"test","entry":"20210101T000000Z","elapsed":"P2H","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000"}"#;
-        assert_eq!(add_elapsed(input.into()).id(), expected.parse::<Task>().unwrap().id());
+    fn start_and_end() {
+        let input = r#"{"description":"test","entry":"20210101T000000Z","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000"}"#;
+        let expected = r#"{"description":"test","entry":"20210101T000000Z","elapsed":"P2H","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000"}"#;
+        assert_eq!(
+            add_elapsed(input.into()).id(),
+            expected.parse::<Task>().unwrap().id(),
+        );
+    }
+    #[test]
+    fn no_start_no_end() {
+        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending"}"#;
+        let expexted = input;
+        assert_eq!(
+            add_elapsed(input.into()).id(),
+            expexted.parse::<Task>().unwrap().id(),
+        );
+    }
+    #[test]
+    fn no_start() {
+        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending", "end":"20210101T020000Z"}"#;
+        let expexted = input;
+        assert_eq!(
+            add_elapsed(input.into()).id(),
+            expexted.parse::<Task>().unwrap().id(),
+        );
+    }
+    #[test]
+    fn no_end() {
+        let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending", "start":"20210101T020000Z"}"#;
+        let expexted = input;
+        assert_eq!(
+            add_elapsed(input.into()).id(),
+            expexted.parse::<Task>().unwrap().id(),
+        );
     }
 }
