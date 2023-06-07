@@ -1,3 +1,5 @@
+//! TaskWarrior on-add hook that does nothing.
+
 use tasklib::Task;
 
 fn main() {
