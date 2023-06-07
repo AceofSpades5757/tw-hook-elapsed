@@ -1,5 +1,7 @@
 # For Rust logging
 #export RUST_LOG := "trace,error,warn,debug,info"
+# For Rust backtracing
+#export RUST_BACKTRACE := 1
 
 help:
     @just --list
@@ -7,6 +9,14 @@ help:
 build:
     # Linux (cross-compile)
     cargo build --release --bin on-add_noop --target x86_64-unknown-linux-musl
+
+install:
+    # Linux (cross-compile)
+    #cargo install --root ./build --target x86_64-unknown-linux-musl
+    # Create binaries in ./build/bin
+    cargo install --root ./build --path .
+    # Copy binaries to hooks directory
+    cp ./build/bin/* ~/.task/hooks/
 
 test1:
     echo '{ \
