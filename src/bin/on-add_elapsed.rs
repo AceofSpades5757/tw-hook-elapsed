@@ -1,6 +1,9 @@
 //! Add UDA elapsed time to new tasks.
 //!
 //! This would typically be for a task that is logged with a given start and end time.
+//!
+//! WARNING: TaskWarrior will _not_ include `end` for newly added tasks. Although we are prepared
+//! for this eventuality, it is simply not supported.
 
 use tasklib::prelude::*;
 
