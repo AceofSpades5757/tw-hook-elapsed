@@ -151,4 +151,16 @@ mod tests {
         let expected = input;
         assert_eq!(add_elapsed(input.into()), expected.parse::<Task>().unwrap(),);
     }
+    #[test]
+    fn math() {
+        let input = r#"{"description":"test","entry":"20210101T000000Z","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000",
+        "start":"20210101T020000Z",
+        "end":"20210101T040000Z"
+    }"#;
+        let expected = r#"{"description":"test","entry":"20210101T000000Z","elapsed":"P2H","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000",
+        "start":"20210101T020000Z",
+        "end":"20210101T040000Z"
+    }"#;
+        assert_eq!(add_elapsed(input.into()).to_string().parse::<Task>().unwrap(), expected.parse::<Task>().unwrap(),);
+    }
 }
