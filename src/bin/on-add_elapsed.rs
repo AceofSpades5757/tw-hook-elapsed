@@ -33,5 +33,5 @@ fn run_on_add_hook(task: Task) -> Task {
 
     let modified_task = add_elapsed(task);
     log::info!("modified task: {:?}", &modified_task);
-    return modified_task;
+    modified_task
 }

@@ -17,7 +17,7 @@ fn main() {
     // Write modified task JSON to stdout
     match modified_task {
         Some(modified_task) => modified_task.to_stdout().unwrap(),
-        None => println!("{}", "{}"),
+        None => println!("{{}}"),
     }
 }
 
@@ -29,5 +29,5 @@ fn run_on_modify_hook(_: Task, post_task: Option<Task>) -> Option<Task> {
     }
     let modified_task = post_task.unwrap();
     log::info!("post_task: {:?}", &modified_task);
-    return Some(modified_task);
+    Some(modified_task)
 }
