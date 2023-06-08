@@ -3,6 +3,8 @@
 # For Rust backtracing
 #export RUST_BACKTRACE := 1
 
+BUILD := "./build"
+
 help:
     @just --list
 
@@ -12,11 +14,15 @@ build:
 
 install:
     # Linux (cross-compile)
-    #cargo install --root ./build --target x86_64-unknown-linux-musl
-    # Create binaries in ./build/bin
-    cargo install --root ./build --path .
+    #cargo install --root {{BUILD}} --target x86_64-unknown-linux-musl
+    # Create binaries in {{BUILD}}/bin
+    cargo install --root {{BUILD}} --path .
     # Copy binaries to hooks directory
-    cp ./build/bin/* ~/.task/hooks/
+    cp {{BUILD}}/bin/* ~/.task/hooks/
+
+clean:
+    cargo clean
+    rm -rf {{BUILD}}
 
 test1:
     echo '{ \
