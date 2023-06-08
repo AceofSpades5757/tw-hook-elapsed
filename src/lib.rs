@@ -161,13 +161,23 @@ mod tests {
         "start":"20210101T020000Z",
         "end":"20210101T040000Z"
     }"#;
-        let mut modified = add_elapsed(input.into()).to_string().parse::<Task>().unwrap();
-        let mut elapsed = modified.udas().get("elapsed").unwrap().as_uda_duration().unwrap();
+        let mut modified = add_elapsed(input.into())
+            .to_string()
+            .parse::<Task>()
+            .unwrap();
+        let mut elapsed = modified
+            .udas()
+            .get("elapsed")
+            .unwrap()
+            .as_uda_duration()
+            .unwrap();
         match elapsed {
             UdaValue::Duration(ref mut d) => d.smooth(),
             _ => panic!(),
         }
-        modified.udas_mut().insert("elapsed".to_string(), elapsed.as_uda_string().unwrap());
+        modified
+            .udas_mut()
+            .insert("elapsed".to_string(), elapsed.as_uda_string().unwrap());
         assert_eq!(modified, expected.parse::<Task>().unwrap(),);
     }
 }
