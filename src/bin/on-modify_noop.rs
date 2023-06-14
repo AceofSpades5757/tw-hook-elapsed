@@ -22,10 +22,10 @@ fn main() {
 }
 
 /// Abstraction to ensure that everything the hook needs to complete is returned.
-fn run_on_modify_hook(_: Task, post_task: Option<Task>) -> Option<Task> {
+fn run_on_modify_hook(pre_task: Task, post_task: Option<Task>) -> Option<Task> {
     if post_task.is_none() {
-        log::info!("post_task is None");
-        return post_task;
+        log::info!("post_task is empty");
+        return Some(pre_task);
     }
     let modified_task = post_task.unwrap();
     log::info!("post_task: {:?}", &modified_task);
