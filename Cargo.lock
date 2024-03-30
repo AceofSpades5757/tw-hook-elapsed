@@ -72,7 +72,7 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 
 [[package]]
 name = "elapsed"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "env_logger",
  "log",
@@ -299,9 +299,9 @@ dependencies = [
 
 [[package]]
 name = "tasklib"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2fb9288fbeaab7741ae08983d447e1f4735c36cbb6967803349ef014058a41af"
+checksum = "43734c3ca2ee620cbb0e33b1beee73223469524fa8708ab2bf3f66ace5787417"
 dependencies = [
  "chrono",
  "nom",
