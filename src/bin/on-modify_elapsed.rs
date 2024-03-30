@@ -1,6 +1,8 @@
 //! Add UDA elapsed time to modified tasks.
 //!
-//! Adds time to existing time if an existing time is present.
+//! ~~Adds time to existing time if an existing time is present.~~
+//!
+//! * This feature was deemed unuseful and has been temporarily disabled.
 
 use tasklib::prelude::*;
 
@@ -50,7 +52,8 @@ fn run_on_modify_hook(pre_task: &Task, post_task: Option<&Task>) -> Task {
         return post_task.unwrap().clone();
     }
 
-    // Monkey patch start to our task to be modified.
+    // Add `start` value back to our task to be modified.
+    // The post task removes the start value when adding the end value.
     *task.start_mut() = Some(*start.unwrap());
 
     log::debug!("task mid: {:?}", &task);
