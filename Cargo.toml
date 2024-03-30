@@ -6,8 +6,4 @@ edition = "2021"
 [dependencies]
 env_logger = "0.10.0"
 log = "0.4.17"
-
-[dependencies.tasklib]
-# FIXME: use stable version once available
-path = "../tasklib-rs"
-version = "0.2.0"
+tasklib = "0.3"
