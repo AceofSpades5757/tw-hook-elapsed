@@ -90,6 +90,7 @@ mod tests {
         assert_eq!(add_elapsed(input.into()), expected.parse::<Task>().unwrap(),);
     }
     #[test]
+    #[ignore = "adding existing time has been disabled until further notice"]
     fn existing_elapsed_start_and_end() {
         let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending",
         "start":"20210101T020000Z",
@@ -125,6 +126,7 @@ mod tests {
         };
         assert_eq!(input_elapsed, expected_elapsed,);
     }
+
     #[test]
     fn existing_elapsed_no_start_no_end() {
         let input = r#"{"uuid":"00000000000000000000000000000000", "description":"test", "entry":"20210101T000000Z", "modified":"20210101T000000Z", "status":"pending",
@@ -151,7 +153,9 @@ mod tests {
         let expected = input;
         assert_eq!(add_elapsed(input.into()), expected.parse::<Task>().unwrap(),);
     }
+
     #[test]
+    #[ignore = "smoothing has not been implemented due to issues with data loss"]
     fn duration_smoothing() {
         let input = r#"{"description":"test","entry":"20210101T000000Z","modified":"20210101T000000Z","status":"pending","tags":["test"],"uuid":"00000000000000000000000000000000",
         "start":"20210101T020000Z",
