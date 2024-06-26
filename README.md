@@ -16,11 +16,22 @@ Elapsed is calculated by `end_date - start_date`.
 
 # Installation
 
-_Need to have `just` installed._
+_Note that there are a couple noop (no operation) hooks that are included as well. They'll be removed in due time._
+
+Requires that the Rust toolchain be installed. If you need a release, create an issue and I'll start making releases.
+
+## Using [`just`](https://github.com/casey/just)
+
+_Need to have [`just`](https://github.com/casey/just) installed._
 
 `just install`
 
 This will put `on-add_elapsed` and `on-modify_elapsed` binaries in `~/.task/hooks`.
+
+## Manually
+
+1. Create installation binary in a local build directory: `cargo install --root ./build --path .`
+1. Copy the binaries to your hooks directory (by default in `~/.task/hooks`): `cp ./build/bin/* ~/.task/hooks/`
 
 # Scenarios
 
